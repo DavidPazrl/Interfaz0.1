@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Uniformes - Instituto</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <!-- Modal de Alerta -->
+    <div id="alertModal" class="alert-modal">
+        <div class="alert-content">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <h2>¡ALERTA!</h2>
+            <p>Uniforme Incorrecto Detectado</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Control de Uniformes</h1>
+            <p>Detección automática mediante inteligencia artificial</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Panel Principal -->
+            <div>
+                <div class="card">
+                    <h2>
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        Captura y Análisis
+                    </h2>
+
+                    <div class="video-container" id="videoContainer">
+                        <video id="video" autoplay playsinline style="display: none;"></video>
+                        <img id="capturedImage" style="display: none;">
+                        <div class="video-placeholder" id="placeholder">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <p>Inicia la cámara o carga una imagen para comenzar</p>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-primary" id="btnStartCamera">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                            Iniciar Cámara
+                        </button>
+                        <button class="btn btn-secondary" id="btnUploadImage">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Cargar Imagen
+                        </button>
+                        <input type="file" id="fileInput" accept="image/*">
+                        <button class="btn btn-success" id="btnAnalyze" disabled>
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Analizar Uniforme
+                        </button>
+                        <button class="btn btn-danger" id="btnStopCamera" style="display: none;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            Detener
+                        </button>
+                    </div>
+                    <div id="detectionResult" style="display: none;"></div>
+                </div>
+
+                <!-- Historial de Detecciones -->
+                <div class="card" style="margin-top: 20px;">
+                    <h2>
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Historial de Detecciones
+                    </h2>
+                    <button class="btn btn-secondary" id="btnDownloadReport" style="margin-bottom: 15px;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Descargar Reporte
+                    </button>
+                    <div class="history-list" id="historyList">
+                        <p style="text-align: center; color: #999; padding: 20px;">No hay detecciones aún</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Lateral -->
+            <div>
+                <div class="card">
+                    <h2>
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Estadísticas
+                    </h2>
+                    <div class="stats-grid">
+                        <div class="stat-card total">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Analizados</h3>
+                                <p id="statTotal">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card compliant">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Uniformes Correctos</h3>
+                                <p id="statCompliant">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card non-compliant">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Incidencias</h3>
+                                <p id="statNonCompliant">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info del Sistema -->
+                <div class="card" style="margin-top: 20px;">
+                    <h2>
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Estado del Sistema
+                    </h2>
+                    <div style="padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <p style="font-weight: 600; color: #065f46; margin-bottom: 5px;">✓ Sistema Operativo</p>
+                        <p style="font-size: 14px; color: #666;">Modelo de IA: <span id="modelStatus">Conectado</span></p>
+                        <p style="font-size: 14px; color: #666;">Última actualización: <span id="lastUpdate">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+</body>
+</html>
