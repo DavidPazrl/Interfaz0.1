@@ -1,14 +1,6 @@
-
-// ========================================
-// CONFIGURACIÓN - AQUÍ CONECTAS TU MODELO
-// ========================================
 const CONFIG = {
-    // Cambia esta URL a tu endpoint PHP que procesa las imágenes
     API_ENDPOINT: 'api/analyze_uniform.php',
-
-    // Si necesitas enviar headers adicionales
     API_HEADERS: {
-        // 'Authorization': 'Bearer tu_token_aqui'
     }
 };
 
@@ -18,7 +10,7 @@ let detections = [];
 let stats = { total: 0, compliant: 0, nonCompliant: 0 };
 const alarmSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjCJ1O/FdSYFKXzL8diOOwkSbsTv6Jc=');
 
-// Referencias DOM
+
 const video = document.getElementById('video');
 const capturedImage = document.getElementById('capturedImage');
 const placeholder = document.getElementById('placeholder');
@@ -32,9 +24,7 @@ const alertModal = document.getElementById('alertModal');
 const historyList = document.getElementById('historyList');
 const btnDownloadReport = document.getElementById('btnDownloadReport');
 
-// ========================================
-// FUNCIÓN PRINCIPAL - ENVIAR IMAGEN AL MODELO
-// ========================================
+// Funcion principal
 async function analyzeImage(imageData) {
     try {
         btnAnalyze.disabled = true;
@@ -44,7 +34,7 @@ async function analyzeImage(imageData) {
         const formData = new FormData();
         formData.append('image', imageData);
 
-        // *** AQUÍ ES DONDE TU PHP RECIBE LA IMAGEN ***
+        // PHP recibe 
         const response = await fetch(CONFIG.API_ENDPOINT, {
             method: 'POST',
             headers: CONFIG.API_HEADERS,
@@ -54,18 +44,7 @@ async function analyzeImage(imageData) {
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
-
         const result = await response.json();
-
-        // *** FORMATO ESPERADO DE TU PHP ***
-        // {
-        //     "success": true,
-        //     "isCompliant": true/false,
-        //     "confidence": 0.95,
-        //     "uniform_type": "Camisa Azul" o "Polo Azul" o "Sin Uniforme",
-        //     "timestamp": "2024-11-06 14:30:00"
-        // }
-
         displayResult(result);
         addToHistory(result);
         updateStats(result.isCompliant);
@@ -88,7 +67,7 @@ async function analyzeImage(imageData) {
     }
 }
 
-// Iniciar cámara
+// Camara
 async function startCamera() {
     try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -107,7 +86,6 @@ async function startCamera() {
     }
 }
 
-// Detener cámara
 function stopCamera() {
     if (stream) {
         stream.getTracks().forEach(track => track.stop());
@@ -143,8 +121,6 @@ function handleFileUpload(e) {
             video.style.display = 'none';
             placeholder.style.display = 'none';
             btnAnalyze.disabled = false;
-
-            // Analizar imagen cargada
             analyzeImage(file);
         };
         reader.readAsDataURL(file);
